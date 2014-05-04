@@ -6,8 +6,7 @@ class TasksController < ApplicationController
 
   def create     
   	@task = Task.create(task_params)     
-  	@tasks = Task.all
-    render :hide_form
+  	save_task
   end   
 
   def destroy 
@@ -23,13 +22,21 @@ class TasksController < ApplicationController
 
   def update
     @task = Task.find(params[:id])
-    @task.update_attributes(task_params)
-    @tasks = Task.all
-    render :hide_form
+    @task.assign_attributes(task_params)
+    save_task
   end
 
   private   
   def task_params     
   	params.require(:task).permit(:title, :note, :completed)   
   end 
+
+  def save_task 
+    if @task.save 
+      @tasks = Task.all 
+      render :hide_form 
+    else 
+      render :show_form 
+    end 
+  end
 end
